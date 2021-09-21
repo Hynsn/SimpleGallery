@@ -1,127 +1,45 @@
 package com.hynson.learn
 
-class HigherOrderFunc2 {
-
-    fun login(name: String, pwd: String, respResult: (Boolean) -> Unit) {
-        if (name == "test" && pwd == "1234")
-            respResult(true)
-        else
-            respResult(false)
-    }
-
-    fun show(name: String = "test", action: (String) -> Unit) = action(name)
-
-    // 多lambda
-    fun show2(lambda1: (Int) -> Unit, lambda2: (String) -> Unit) {
-        lambda1(100)
-        lambda2("test")
-    }
-
-}
-
-class ClickListener<T> {
-    // 执行动作
-    private val actions = arrayListOf<(T?) -> Unit>()
-
-    // 执行数据
-    private val resIds = arrayListOf<(T?)>()
-
-    /**
-     * 添加点击事件
-     */
-    fun addListener(id:T?, action:(T?) -> Unit){
-        val index = resIds.indexOf(id)
-        if(index == -1){
-            actions += action
-            resIds += id
-        }
-        else {
-            actions[index] = action
-            println("View $id 重复添加事件...")
-        }
-    }
-
-    /**
-     * 模拟点击事件
-     */
-    fun touchListeners() {
-        if(actions.isEmpty()) return
-        actions.forEachIndexed { index, item ->
-            item.invoke(resIds[index])
-        }
-    }
-
-
-}
-
 fun main() {
-    val test1 = HigherOrderFunc2()
-    test1.login("test", "1234") {
-        println("登录结果 $it")
-    }
 
-    test1.show(name = "李四", action = {
-        println("版本1 $it")
-    })
-    // 版本2，编译器提示Lambda argument should be moved out of parentheses 编译器不建议该用法
-    test1.show(name = "李四", {
-        println("版本2 $it")
-    })
-    test1.show("李四") {
-        println("版本3 $it")
-    }
-    test1.show {
-        println("版本4 $it")
-    }
-    // 明确指定参数顺序，当参数很多时非常有用
-    test1.show2(lambda1 = {
-        println("lambda1")
-    }, lambda2 = {
-        println("lambda2")
-    })
-    test1.show2(lambda2 = {
-        println("lambda2")
-    }, lambda1 = {
-        println("lambda1")
-    })
+    // 默认Unit
+    fun t01(){ 1}
+    fun t02(){ 7.5f}
+    fun t03(){ true}
 
-    // 同样也支持链式，但注意这里的链式调用必须按照函数的实现顺序来，否则编译器会报错
-    test1.show2(lambda1 = {
-        println("lambda1")
-    }) {
-        println("lambda2")
-    }
+    fun t04():String { return "test"} // 默认String，在函数体内部,return xxx编译器是不支持类型推导的
 
-    "dd".run {
-        println("跑起来了${it.length}")
-    }
+    fun s01() = { } // () ->Unit，函数中又是函数
 
-    val listener = ClickListener<Int>()
-    listener.addListener(1){
-        println("点击了$it")
-    }
-    listener.addListener(2) {
-        println("点击了$it 方式1 ")
-    }
-    // 函数引用
-    listener.addListener(2,::handle)
-    listener.addListener(3,::handle)
+    fun s02() = run{ println()} // 由里面向外面决定返回类型 run函数返回类型为泛型，返回Unit类型
+    fun s03() : Boolean = run { true }
+    fun s04() : (Int) -> Boolean = { true } // 输入(int) -> 输出Boolean
 
-    listener.touchListeners()
+    s03()
+    s04()(4)
+
+    fun s05() = { n1:Int ->
+        println("$n1")
+        true
+    }
+    s05()(34)
+
+    // 开发时一般不会用fun关键字 + 声明处，lambda+函数==高阶函数
+    fun s06(){
+
+    }
+    val s07 = {
+
+    }
+    // 区别：s06是一个函数，s07接收的是一个匿名函数的变量，它可以执行这个匿名函数
 
 }
-fun <T> handle(id: T?){
-    println("点击了$id 方式2")
+/*
+// 扩展函数，你对谁扩展 this==xxx本身
+// 默认public static
+fun Glide.show(){
+    // this == Glide
 }
-
-/**
- * 高阶函数+扩展函数
- * fun <万能类型> 万能类型.run( block:万能类型.() -> (万能类型)) = block()
- * 第一个this是被拓展出来的，调用端
- * 第二个this是匿名扩展，lambda里面
- * T.()会给block的lambda会让lambda实现体里面持有this == T本身。
- * T.(T)会给block的lambda会让lambda实现体里面持有it== T本身。
- */
-inline fun <T, R> T.run(block: (T) -> (R)): R {
-    return block(this)
+fun OkHttp.showInfo(){
 }
+*/

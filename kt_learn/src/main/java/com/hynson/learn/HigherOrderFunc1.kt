@@ -87,28 +87,4 @@ fun main() {
             }
         }
     ret5(4)("dd")("44")
-
 }
-
-
-/*
-
-
-// 扩展函数，你对谁扩展 this==xxx本身
-// 默认public static
-fun Glide.show(){
-    // this == Glide
-}
-fun OkHttp.showInfo(){
-}
-// 默认Unit
-fun t01(){ 1}
-fun t01(){ 7.5f}
-fun t01(){ true}
-fun t01():String { return "test"} // 默认String
-
-fun s01() = { } // () ->Unit，函数中又是函数
-
-fun s02() = run{ println()} // 由里面向外面决定返回类型 run函数返回类型为泛型，返回unit类型
-
-*/
