@@ -120,7 +120,7 @@ fun LazyRowItemsDemo() {
 @Preview(showBackground = true)
 @Composable
 fun Content() {
-    val imageRes = painterResource(id = R.drawable.abc_vector_test)
+    val imageRes = painterResource(id = R.drawable.ic_launcher_background)
     Row(
         modifier = Modifier
             .background(Color(0xFFBCE9FF))

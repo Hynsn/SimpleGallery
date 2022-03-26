@@ -6,7 +6,12 @@ buildscript {
     }
     repositories {
         google()
+        jcenter()
         mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.0'
@@ -14,17 +19,33 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-
+        classpath 'com.gradle:build-scan-plugin:1.16'
         //classpath 'com.uber:okbuck:0.52.0'
     }
+
 }
+
 
 allprojects {
     repositories {
         google()
+        jcenter()
         mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
     }
 }
+//apply plugin: 'com.gradle.build-scan'
+
+
+/*gradle.startParameter.excludedTaskNames.add('lint')
+gradle.startParameter.excludedTaskNames.add('lintVitalRelease')*/
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 4, 'hours'
+}
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir
