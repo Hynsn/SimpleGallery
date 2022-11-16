@@ -15,6 +15,7 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="fullSensor"
+            android:exported="true"
             android:configChanges="orientation|layoutDirection">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

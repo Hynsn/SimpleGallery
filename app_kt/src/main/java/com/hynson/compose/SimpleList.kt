@@ -1,4 +1,4 @@
-package com.example.app
+package com.hynson.compose
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -48,8 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
+import com.hynson.compose.Utils.random
 import kotlinx.coroutines.launch
-import java.lang.Math.random
 
 /**
  * Author: Hynsonhou
@@ -149,7 +149,8 @@ fun LazyRowItemsDemo(it: PaddingValues) {
         }
         FloatingActionButton(onClick = {
             scope.launch {
-                list.add(Contact(1, Utils.color(), Utils.c().toString(), mutableStateOf(0)))
+                val c = Color(0).random()
+                list.add(Contact(1, c, random(), mutableStateOf(0)))
                 val index = list.size - 1
                 state.scrollToItem(index)
             }
@@ -163,11 +164,11 @@ fun LazyRowItemsDemo(it: PaddingValues) {
     }
 }
 
-
 fun mockData(): List<Contact> {
     val list = mutableListOf<Contact>()
     for (i in 0..5) {
-        list.add(Contact(5, Utils.color(), Utils.c().toString(), mutableStateOf(0)))
+        val c = Color(0).random()
+        list.add(Contact(5, c, random(), mutableStateOf(0)))
     }
     return list
 }
@@ -241,7 +242,7 @@ private fun ShowDialog(alertDialog: MutableState<Int>, onClick: (Int) -> Unit) {
             text = {
                 Text(
                     "是否获得屠龙宝刀一把" + "\n" +
-                        "是否获得倚天神剑一把"
+                            "是否获得倚天神剑一把"
                 )
             },
             //一个按钮，用于确认的操作，从而解决触发对话框的原因。该对话框不会为此按钮设置任何事件，因此它们需要由调用者设置。null则不显示

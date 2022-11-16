@@ -1,4 +1,4 @@
-package com.example.app
+package com.hynson.compose
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
