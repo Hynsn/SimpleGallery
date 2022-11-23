@@ -3,6 +3,7 @@ package com.hynson.compose.paging
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.delay
 import java.io.IOException
 import java.lang.Exception
 
@@ -10,6 +11,8 @@ class ADataSource : PagingSource<Int, DatasBean>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DatasBean> {
 
         return try {
+
+            delay(500)
 
             //页码未定义置为1
             val currentPage = params.key ?: 1
