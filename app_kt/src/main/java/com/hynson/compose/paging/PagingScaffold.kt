@@ -1,40 +1,48 @@
 package com.hynson.compose.paging
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.hynson.compose.NaviConst
 import kotlinx.coroutines.launch
 
 @Composable
-fun PagingTest() {
+fun PagingScaffold(navController: NavHostController) {
     val TAG = "加载状态"
     val mainViewmodel: PagingViewModel = viewModel()
     val data = mainViewmodel.getData().collectAsLazyPagingItems()
@@ -43,15 +51,9 @@ fun PagingTest() {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     var lastRefresh = true
+
     Scaffold(scaffoldState = scaffoldState, topBar = {
-        TopAppBar(title = { Text("脚手架") },
-            navigationIcon = {
-                IconButton(onClick = {
-                    scope.launch { scaffoldState.drawerState.open() }
-                }) {
-                    Icon(Icons.Filled.Menu, contentDescription = null)
-                }
-            })
+        TopAppBar(title = { Text("分页") })
     }, content = {
         val paddingValues = it
         SwipeRefresh(state = refreshState, onRefresh = {
@@ -59,7 +61,12 @@ fun PagingTest() {
         }) {
             LazyColumn() {
                 items(items = data) { item ->
-                    Message(data = item)
+                    Message(data = item, click = {
+                        navController.currentBackStackEntry?.arguments?.run {
+                            putParcelable(NaviConst.DataBean, item)
+                        }
+                        navController.navigate(NaviConst.DETAIL)
+                    })
                 }
 
                 data.run {
@@ -91,7 +98,7 @@ fun PagingTest() {
                             if (lastRefresh) {
                                 lastRefresh = false
                                 scope.launch {
-                                    scaffoldState.snackbarHostState.showSnackbar("刷新失败")
+                                    scaffoldState.snackbarHostState.showSnackbar("刷新失败", duration = SnackbarDuration.Short)
                                 }
                             }
 
@@ -134,13 +141,16 @@ fun PagingTest() {
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Message(data: DatasBean?) {
+fun Message(data: DatasBean?, click: () -> Unit) {
     Card(
         modifier = Modifier
             .background(Color.White)
             .padding(10.dp)
-            .fillMaxSize(), elevation = 10.dp
+            .fillMaxSize()
+            .combinedClickable(onClick = click),
+        elevation = 10.dp
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(
@@ -153,20 +163,38 @@ fun Message(data: DatasBean?) {
 
 @Composable
 fun ErrorItem(retry: () -> Unit) {
-    Button(onClick = { retry() }, modifier = Modifier.padding(10.dp)) {
-        Text(text = "重试")
+    Row(horizontalArrangement = Arrangement.Center) {
+        Text(text = "请求出错啦!")
+        Button(onClick = { retry() }, modifier = Modifier.padding(10.dp)) {
+            Text(text = "加载更多~")
+        }
     }
 }
 
 @Composable
 fun ErrorContent(retry: () -> Unit) {
-    Text(text = "请求出错啦")
-    Button(onClick = { retry() }, modifier = Modifier.padding(10.dp)) {
-        Text(text = "重试")
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
+        Text(text = "请求出错啦!")
+        Button(onClick = { retry() }, modifier = Modifier.padding(10.dp)) {
+            Text(text = "重试")
+        }
     }
 }
 
 @Composable
 fun LoadingItem() {
-    CircularProgressIndicator(modifier = Modifier.padding(10.dp))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(modifier = Modifier.padding(10.dp))
+    }
 }

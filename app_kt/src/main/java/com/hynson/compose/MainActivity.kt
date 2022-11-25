@@ -8,9 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +22,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hynson.compose.paging.PagingTest
+import com.hynson.compose.paging.DetailScaffold
+import com.hynson.compose.paging.PagingScaffold
 import com.hynson.compose.scaffold.ScaffoldTest
 
 class MainActivity : ComponentActivity() {
@@ -56,13 +55,16 @@ class MainActivity : ComponentActivity() {
                     })
                 }
                 composable(NaviConst.PAGING) {
-                    PagingTest()
+                    PagingScaffold(navController)
                 }
                 composable(NaviConst.COMMON) {
                     Contact()
                 }
                 composable(NaviConst.SCAFFOLD) {
                     ScaffoldTest()
+                }
+                composable(NaviConst.DETAIL){
+                    DetailScaffold(navController)
                 }
             }
         }
@@ -84,7 +86,7 @@ fun Content(navController: NavHostController) {
                 .wrapContentHeight()
                 .background(Color(0xFFFFFF00))
                 .clickable {
-                    navController.navigate(NaviConst.PAGING)
+                    navController.navigate(NaviConst.COMMON)
                 }
         )
         Text(

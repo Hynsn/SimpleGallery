@@ -14,4 +14,7 @@ object NaviConst {
     const val LAZY_COLUMN = "LazyColumn"
     const val SCAFFOLD = "Scaffold"
     const val PAGING = "Paging"
+    const val DETAIL = "detail"
+
+    const val DataBean = "DatasBean"
 }

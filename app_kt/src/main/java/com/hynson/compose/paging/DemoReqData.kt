@@ -1,8 +1,11 @@
 package com.hynson.compose.paging
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 data class DemoReqData(
     var data: DataBean? = null,
-    var errorCode:Int = 0,
+    var errorCode: Int = 0,
     var errorMsg: String? = null
 )
 
@@ -16,6 +19,7 @@ data class DataBean(
     var datas: List<DatasBean>? = null
 )
 
+@Parcelize
 data class DatasBean(
     var apkLink: String? = null,
     var audit: Int = 0,
@@ -49,8 +53,10 @@ data class DatasBean(
     var visible: Int = 0,
     var zan: Int = 0,
     var tags: List<TagBean>? = null
-)
+) : Parcelable
+
+@Parcelize
 data class TagBean(
     var name: String? = null,
     var url: String? = null
-)
+) : Parcelable
