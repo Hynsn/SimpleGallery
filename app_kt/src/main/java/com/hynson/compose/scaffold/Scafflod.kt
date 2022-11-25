@@ -2,11 +2,19 @@ package com.hynson.compose.scaffold
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.FabPosition
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -21,12 +29,12 @@ fun ScaffoldTest() {
     val scope = rememberCoroutineScope()
     Scaffold(
         scaffoldState = scaffoldState,
-        drawerContent = {//抽屉组件
+        drawerContent = { //抽屉组件
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = "抽屉组件中内容")
             }
         },
-        topBar = {//屏幕顶部的标题栏
+        topBar = { //屏幕顶部的标题栏
             TopAppBar(title = { Text("脚手架") },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -36,7 +44,7 @@ fun ScaffoldTest() {
                     }
                 })
         },
-        floatingActionButton = {//悬浮按钮
+        floatingActionButton = { //悬浮按钮
             ExtendedFloatingActionButton(
                 text = { Text("悬浮按钮") },
                 onClick = {
@@ -45,7 +53,7 @@ fun ScaffoldTest() {
                     }
                 })
         },
-        floatingActionButtonPosition = FabPosition.End,//悬浮按钮在屏幕中的位置
+        floatingActionButtonPosition = FabPosition.End, //悬浮按钮在屏幕中的位置
         content = {
             //屏幕内容
             val paddingValues = it.calculateBottomPadding()
@@ -62,6 +70,6 @@ fun ScaffoldTest() {
                     shape = RoundedCornerShape(10.dp)
                 )
             }
-        })
-
+        }
+    )
 }

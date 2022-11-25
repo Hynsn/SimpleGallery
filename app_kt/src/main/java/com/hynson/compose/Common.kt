@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
  */
 @Preview(showBackground = true)
 @Composable
-fun Content() {
+fun Contact() {
     val imageRes = painterResource(id = R.drawable.ic_launcher_background)
     Row(
         modifier = Modifier
