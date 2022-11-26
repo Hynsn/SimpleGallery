@@ -18,12 +18,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hynson.compose.paging.DetailScaffold
-import com.hynson.compose.paging.PagingScaffold
+import androidx.navigation.navArgument
+import com.hynson.compose.paging.*
 import com.hynson.compose.scaffold.ScaffoldTest
 
 class MainActivity : ComponentActivity() {
@@ -44,6 +46,8 @@ class MainActivity : ComponentActivity() {
             //            SimpleGalleryTheme {
             //
             //            }
+            val mainViewmodel: PagingViewModel = viewModel()
+
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = NaviConst.CONTENT) {
                 composable(NaviConst.CONTENT) {
@@ -55,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     })
                 }
                 composable(NaviConst.PAGING) {
-                    PagingScaffold(navController)
+                    PagingScaffold(navController, mainViewmodel)
                 }
                 composable(NaviConst.COMMON) {
                     Contact()
@@ -63,8 +67,21 @@ class MainActivity : ComponentActivity() {
                 composable(NaviConst.SCAFFOLD) {
                     ScaffoldTest()
                 }
-                composable(NaviConst.DETAIL){
-                    DetailScaffold(navController)
+                composable(
+                    route = "${NaviConst.DETAIL}/{${ParamsConst.TITLE}}/{${ParamsConst.ID}}",
+                    arguments = listOf(
+                        navArgument(ParamsConst.TITLE) {
+                            type = NavType.StringType
+                        },
+                        navArgument(ParamsConst.ID) {
+                            type = NavType.IntType
+                        },
+                    )
+                ) {
+                    val argument = requireNotNull(it.arguments)
+                    val title = argument.getString(ParamsConst.TITLE)
+                    val id = argument.getInt(ParamsConst.ID, 0)
+                    DetailScaffold(title ?: "", id, mainViewmodel)
                 }
             }
         }

@@ -9,7 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hynson.compose.NaviConst
+import com.hynson.compose.ParamsConst
 
 /**
  * Author: Hynsonhou
@@ -20,17 +22,22 @@ import com.hynson.compose.NaviConst
  * Hynsonhou  2022/11/25   1.0       首次创建
  */
 @Composable
-fun DetailScaffold(navController: NavHostController) {
-    val bean = navController.currentBackStackEntry?.arguments?.getParcelable<DatasBean>(NaviConst.DataBean)
-    var name by remember { mutableStateOf("") }
-    bean?.desc?.let {
-        name = it
+fun DetailScaffold(title: String, id: Int, viewmodel: PagingViewModel) {
+    val viewStates = remember {
+        viewmodel.viewState
+    }
+
+    val data = viewStates.pagingData.collectAsLazyPagingItems()
+    var text = "无数据"
+
+    if (data.itemCount > 0) {
+        text = data[id]?.desc ?: ""
     }
     Scaffold(topBar = {
-        TopAppBar(title = { Text("详情") })
+        TopAppBar(title = { Text(title) })
     }, content = {
         val paddingValues = it
 
-        Text(text = name)
+        Text(text = text)
     })
 }

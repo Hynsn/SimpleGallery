@@ -16,5 +16,4 @@ object NaviConst {
     const val PAGING = "Paging"
     const val DETAIL = "detail"
 
-    const val DataBean = "DatasBean"
 }
