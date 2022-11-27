@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                     val argument = requireNotNull(it.arguments)
                     val title = argument.getString(ParamsConst.TITLE)
                     val id = argument.getInt(ParamsConst.ID, 0)
-                    DetailScaffold(title ?: "", id, mainViewmodel)
+                    DetailPage(title ?: "", id, mainViewmodel)
                 }
             }
         }
