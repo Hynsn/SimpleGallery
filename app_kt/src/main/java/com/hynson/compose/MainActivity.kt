@@ -26,7 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.hynson.compose.paging.*
-import com.hynson.compose.scaffold.ScaffoldTest
+import com.hynson.compose.scaffold.ScaffoldPage
 
 class MainActivity : ComponentActivity() {
     @ExperimentalComposeUiApi
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     Contact()
                 }
                 composable(NaviConst.SCAFFOLD) {
-                    ScaffoldTest()
+                    ScaffoldPage()
                 }
                 composable(
                     route = "${NaviConst.DETAIL}/{${ParamsConst.TITLE}}/{${ParamsConst.ID}}",
