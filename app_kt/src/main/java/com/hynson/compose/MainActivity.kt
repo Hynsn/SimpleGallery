@@ -8,12 +8,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -25,7 +29,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.hynson.compose.paging.*
+import com.hynson.compose.paging.DetailPage
+import com.hynson.compose.paging.PagingScaffold
+import com.hynson.compose.paging.PagingViewModel
 import com.hynson.compose.scaffold.ScaffoldPage
 
 class MainActivity : ComponentActivity() {
@@ -90,6 +96,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Content(navController: NavHostController) {
+    val shape = RoundedCornerShape(5.dp)
+    val style = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight(Alignment.CenterVertically)
+        .blur(5.dp)
+        .height(40.dp)
+        .background(Color(0xFFFFFF00), shape)
     Column(
         modifier = Modifier
             .background(Color(0xFF063142))
@@ -98,37 +111,27 @@ fun Content(navController: NavHostController) {
     ) {
         val fontSize = 18.sp
         Text(
-            text = "基础用法", fontSize = fontSize, modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(Color(0xFFFFFF00))
-                .clickable {
-                    navController.navigate(NaviConst.COMMON)
-                }
+            text = "基础用法", fontSize = fontSize, modifier = style.clickable {
+                navController.navigate(NaviConst.COMMON)
+            }
         )
         Text(
-            text = "列表", fontSize = fontSize, modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(Color(0xFF4385F4))
+            text = "列表", fontSize = fontSize, modifier = style
+                .background(Color(0xFF4385F4), shape)
                 .clickable {
                     navController.navigate(NaviConst.LAZY_COLUMN)
                 }
         )
         Text(
-            text = "脚手架", fontSize = fontSize, modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(Color(0xFF3CDB85))
+            text = "脚手架", fontSize = fontSize, modifier = style
+                .background(Color(0xFF3CDB85), shape)
                 .clickable {
                     navController.navigate(NaviConst.SCAFFOLD)
                 }
         )
         Text(
-            text = "分页", fontSize = fontSize, modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(Color(0xFF3CDB85))
+            text = "分页", fontSize = fontSize, modifier = style
+                .background(Color.Red, shape)
                 .clickable {
                     navController.navigate(NaviConst.PAGING)
                 }
