@@ -15,5 +15,5 @@ object NaviConst {
     const val SCAFFOLD = "Scaffold"
     const val PAGING = "Paging"
     const val DETAIL = "Detail"
-
+    const val MODAL_BOTTOMSHEET = "ModalBottomSheet"
 }

@@ -29,6 +29,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.hynson.compose.bottomsheet.CustomModalBottomSheetDemo
 import com.hynson.compose.paging.DetailPage
 import com.hynson.compose.paging.PagingScaffold
 import com.hynson.compose.paging.PagingViewModel
@@ -72,6 +73,9 @@ class MainActivity : ComponentActivity() {
                 }
                 composable(NaviConst.SCAFFOLD) {
                     ScaffoldPage()
+                }
+                composable(NaviConst.MODAL_BOTTOMSHEET) {
+                    CustomModalBottomSheetDemo()
                 }
                 composable(
                     route = "${NaviConst.DETAIL}/{${ParamsConst.TITLE}}/{${ParamsConst.ID}}",
@@ -134,6 +138,13 @@ fun Content(navController: NavHostController) {
                 .background(Color.Red, shape)
                 .clickable {
                     navController.navigate(NaviConst.PAGING)
+                }
+        )
+        Text(
+            text = "底部弹框", fontSize = fontSize, modifier = style
+                .background(Color.Red, shape)
+                .clickable {
+                    navController.navigate(NaviConst.MODAL_BOTTOMSHEET)
                 }
         )
     }
