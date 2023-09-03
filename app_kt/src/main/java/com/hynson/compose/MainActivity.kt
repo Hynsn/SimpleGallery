@@ -1,5 +1,6 @@
 package com.hynson.compose
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,9 +20,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -40,25 +43,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //    Image(
-            //        painter = painterResource(id = R.drawable.ic_launcher_background),
-            //        contentDescription = "popular.title",
-            //        contentScale = ContentScale.Crop,
-            //        modifier = Modifier
-            //            .padding(8.dp)
-            //            .size(30.dp)
-            //            .clip(RoundedCornerShape(corner = CornerSize(16.dp)))
-            //    )
-            //            Log.i("TAG", "setContent: ${this.javaClass}")
-            //            SimpleGalleryTheme {
-            //
-            //            }
+
             val mainViewmodel: PagingViewModel = viewModel()
+            val context = LocalContext.current
 
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = NaviConst.CONTENT) {
                 composable(NaviConst.CONTENT) {
-                    Content(navController)
+                    Content(navController) {
+                        val intent = Intent(context, StatusBarActivity::class.java)
+                        ContextCompat.startActivity(context, intent, null)
+                    }
                 }
                 composable(NaviConst.LAZY_COLUMN) {
                     SimpleList(title = stringResource(id = R.string.device_settings), onBack = {
@@ -75,6 +70,7 @@ class MainActivity : ComponentActivity() {
                     ScaffoldPage()
                 }
                 composable(NaviConst.MODAL_BOTTOMSHEET) {
+//                    ModalBottomDemo()
                     CustomModalBottomSheetDemo()
                 }
                 composable(
@@ -99,7 +95,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Content(navController: NavHostController) {
+fun Content(navController: NavHostController, onClick: () -> Unit) {
     val shape = RoundedCornerShape(5.dp)
     val style = Modifier
         .fillMaxWidth()
@@ -146,6 +142,11 @@ fun Content(navController: NavHostController) {
                 .clickable {
                     navController.navigate(NaviConst.MODAL_BOTTOMSHEET)
                 }
+        )
+        Text(
+            text = "沉浸式状态栏", fontSize = fontSize, modifier = style
+                .background(Color.Red, shape)
+                .clickable(onClick = onClick)
         )
     }
 }
