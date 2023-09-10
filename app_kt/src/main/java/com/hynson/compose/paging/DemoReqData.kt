@@ -1,7 +1,7 @@
 package com.hynson.compose.paging
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 data class DemoReqData(
     var data: DataBean? = null,
