@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -96,10 +98,6 @@ fun Content(
     contents: MutableList<ContentItem>
 ) {
     val shape = RoundedCornerShape(5.dp)
-    val style = Modifier
-        .fillMaxWidth()
-        .blur(5.dp)
-        .height(40.dp)
     Column(
         modifier = Modifier
             .background(Color(0xFF063142))
@@ -108,15 +106,21 @@ fun Content(
     ) {
         val fontSize = 18.sp
         for (item in contents) {
-            Text(
-                text = item.name,
-                color = Color(item.colors.second),
-                fontSize = fontSize,
-                modifier = style
-                    .clickable(onClick = item.action)
+            Box(
+                modifier = Modifier
+                    .height(40.dp)
+                    .fillMaxWidth()
                     .background(color = Color(item.colors.first), shape = shape)
-            )
+                    .clickable(onClick = item.action),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = item.name,
+                    color = Color(item.colors.second),
+                    fontSize = fontSize,
+                    textAlign = TextAlign.Start
+                )
+            }
         }
     }
-
 }
