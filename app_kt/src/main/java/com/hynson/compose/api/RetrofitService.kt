@@ -1,4 +1,4 @@
-package com.hynson.compose.paging
+package com.hynson.compose.api
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

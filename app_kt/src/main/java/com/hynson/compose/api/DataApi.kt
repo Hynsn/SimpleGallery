@@ -1,5 +1,6 @@
-package com.hynson.compose.paging
+package com.hynson.compose.api
 
+import com.hynson.compose.paging.DemoReqData
 import retrofit2.http.GET
 import retrofit2.http.Path
 
