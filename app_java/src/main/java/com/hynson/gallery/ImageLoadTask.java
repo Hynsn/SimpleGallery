@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.hynson.gallery.entity.ImageBean;
 
@@ -17,7 +18,7 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class ImageLoadTask extends AsyncTask<String,Void,Integer> {
+public class ImageLoadTask extends AsyncTask<String, Void, Integer> {
     final static String TAG = "ImageLoadTask";
 
     private static OkHttpClient httpClient;
@@ -36,13 +37,13 @@ public class ImageLoadTask extends AsyncTask<String,Void,Integer> {
 
     @Override
     protected Integer doInBackground(String... strings) {
-        Log.i(TAG, "doInBackground: "+strings[0]);
+        Log.i(TAG, "doInBackground: " + strings[0]);
         Request.Builder builder = new Request.Builder();
-        builder.addHeader("Accept","text/html,application/json");
-        builder.addHeader("Accept-Encoding","utf-8");
-        Request verReq = builder.url("https://pixabay.com/api/?pretty=false&key="+strings[0]+"&per_page="+strings[1]+"&category="+strings[2]+"&image_type="+strings[3]+"&q="+strings[4]).get().build();
+        builder.addHeader("Accept", "text/html,application/json");
+        builder.addHeader("Accept-Encoding", "utf-8");
+        Request verReq = builder.url("https://pixabay.com/api/?pretty=false&key=" + strings[0] + "&per_page=" + strings[1] + "&category=" + strings[2] + "&image_type=" + strings[3] + "&q=" + strings[4]).get().build();
 
-        Log.i(TAG, "search: "+verReq);
+        Log.i(TAG, "search: " + verReq);
         Call call = httpClient.newCall(verReq);
         List<ImageBean> images = new ArrayList<>();
         try {
@@ -58,14 +59,14 @@ public class ImageLoadTask extends AsyncTask<String,Void,Integer> {
                 String webformatURL = array.getJSONObject(i).get("webformatURL").toString();
                 String webformatHeight = array.getJSONObject(i).get("webformatHeight").toString();
                 String webformatWidth = array.getJSONObject(i).get("webformatWidth").toString();
-                ImageBean info = new ImageBean(Long.valueOf(id),tags,Integer.valueOf(likes),
-                        previewURL,Integer.valueOf(previewWidth),Integer.valueOf(previewHeight),
-                        webformatURL,Integer.valueOf(webformatHeight),Integer.valueOf(webformatWidth));
+                ImageBean info = new ImageBean(Long.valueOf(id), tags, Integer.valueOf(likes),
+                        previewURL, Integer.valueOf(previewWidth), Integer.valueOf(previewHeight),
+                        webformatURL, Integer.valueOf(webformatHeight), Integer.valueOf(webformatWidth));
                 images.add(info);
             }
-            loadCallBack.result(images,array.size());
-        } catch (IOException e) {
-            loadCallBack.error(e.getCause()+"");
+            loadCallBack.result(images, array.size());
+        } catch (IOException | JSONException e) {
+            loadCallBack.error(e.getMessage());
             e.printStackTrace();
         }
         return images.size();
@@ -73,7 +74,7 @@ public class ImageLoadTask extends AsyncTask<String,Void,Integer> {
 
     @Override
     protected void onPostExecute(Integer integer) {
-        if(integer!=null)
+        if (integer != null)
             loadCallBack.post();
         super.onPostExecute(integer);
     }

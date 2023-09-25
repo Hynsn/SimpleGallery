@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 搜索历史
     AutoTextView autoTV;
-    Button dialogBtn,searchBtn;
+    Button dialogBtn, searchBtn;
     AutoSearchAdapter searchAdapter;
     List<String> historyList;
 
@@ -68,11 +68,11 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
-    Runnable scrollRunable = new Runnable(){
+    Runnable scrollRunable = new Runnable() {
         @Override
         public void run() {
             Log.i(TAG, "run: +++++");
-            imageAdapter.addData(imageList,4);
+            imageAdapter.addData(imageList, 4);
         }
     };
 
@@ -95,18 +95,24 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(imageList.size()<=0){
-                        Toast.makeText(getBaseContext(),"搜索为空",Toast.LENGTH_SHORT).show();
+                    if (imageList.size() <= 0) {
+                        Toast.makeText(getBaseContext(), "搜索为空", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    imageAdapter.updateData(imageList,imageList.size());
-                    Log.i(TAG, "imageAdapter: "+imageAdapter.getItemCount());
+                    imageAdapter.updateData(imageList, imageList.size());
+                    Log.i(TAG, "imageAdapter: " + imageAdapter.getItemCount());
                 }
             });
         }
 
         @Override
         public void error(String error) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getBaseContext(), "Error:" + error, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         @Override
@@ -131,18 +137,18 @@ public class MainActivity extends AppCompatActivity {
         autoTV.setClearIcon(R.drawable.auto_clear_icon30);
 
         for (int i = 0; i < testArry.length; i++) {
-            SearchSharedPreferences.addSearchHistoty(mContext,testArry[i]);
+            SearchSharedPreferences.addSearchHistoty(mContext, testArry[i]);
         }
 
-        if(null==imageList){
+        if (null == imageList) {
             imageList = new ArrayList<>();
         }
-        if(null==imageAdapter){
+        if (null == imageAdapter) {
             imageAdapter = new ImageAdapter();
         }
         Configuration config = getResources().getConfiguration(); //获取设置的配置信息
-        if(null==staggeredManager){
-            staggeredManager = new StaggeredGridLayoutManager((config.orientation==Configuration.ORIENTATION_LANDSCAPE) ? 3: 2, StaggeredGridLayoutManager.VERTICAL);
+        if (null == staggeredManager) {
+            staggeredManager = new StaggeredGridLayoutManager((config.orientation == Configuration.ORIENTATION_LANDSCAPE) ? 3 : 2, StaggeredGridLayoutManager.VERTICAL);
         }
         imageRV.setLayoutManager(staggeredManager);
 
@@ -150,11 +156,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 //super.onScrolled(recyclerView, dx, dy);
-                if(imageAdapter.getItemCount() >= imageList.size()){
+                if (imageAdapter.getItemCount() >= imageList.size()) {
                     return;
                 }
-                if(recyclerView.canScrollVertically(1)){
-                    new Thread(){
+                if (recyclerView.canScrollVertically(1)) {
+                    new Thread() {
                         @Override
                         public void run() {
                             mHandler.post(scrollRunable);
@@ -170,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         });
         imageRV.setAdapter(imageAdapter);
         historyList = SearchSharedPreferences.getSearchHistoty(mContext);
-        searchAdapter = new AutoSearchAdapter(historyList,MainActivity.this);
+        searchAdapter = new AutoSearchAdapter(historyList, MainActivity.this);
         autoTV.setThreshold(1); // 设置至少输入1个字符开始匹配提示
         autoTV.setAdapter(searchAdapter);
         autoTV.setOnClickListener(new View.OnClickListener() {
@@ -203,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 autoTV.setSelection(str.length());//将光标移至文字末尾
                 autoTV.dismissDropDown();
             }
+
             @Override
             public void onLongClick(String str) {
                 autoTV.setText(str);
@@ -215,12 +222,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SettingDialog settingDialog = new SettingDialog();
-                settingDialog.showDialog(R.layout.setting_dialog, mParams[0],getSupportFragmentManager());
+                settingDialog.showDialog(R.layout.setting_dialog, mParams[0], getSupportFragmentManager());
                 settingDialog.setUpdateCallBack(new SettingDialog.UpdateCallBack() {
 
                     @Override
                     public void update(String... params) {
-                        System.arraycopy(params,0,mParams,0,params.length);
+                        System.arraycopy(params, 0, mParams, 0, params.length);
                     }
                 });
             }
@@ -229,15 +236,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mParams[4] = autoTV.getText().toString();
-                if(mParams[4].length()<1){
-                    Toast.makeText(mContext,"输入为空！",Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    SearchSharedPreferences.addSearchHistoty(mContext,mParams[4]);
+                if (mParams[4].length() < 1) {
+                    Toast.makeText(mContext, "输入为空！", Toast.LENGTH_SHORT).show();
+                } else {
+                    SearchSharedPreferences.addSearchHistoty(mContext, mParams[4]);
                     searchAdapter.setData(SearchSharedPreferences.getSearchHistoty(mContext));
                     imageLoadTask = new ImageLoadTask();
                     imageLoadTask.setLoadCallBack(loadCallBack);
-                    imageLoadTask.execute(mParams[0],mParams[1],mParams[2],mParams[3],mParams[4]);
+                    imageLoadTask.execute(mParams[0], mParams[1], mParams[2], mParams[3], mParams[4]);
                 }
             }
         });
@@ -246,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        staggeredManager.setSpanCount((newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE) ? 3 : 2);
+        staggeredManager.setSpanCount((newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) ? 3 : 2);
         imageRV.setLayoutManager(staggeredManager);
     }
 }
