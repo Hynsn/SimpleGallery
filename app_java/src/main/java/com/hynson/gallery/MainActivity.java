@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.hynson.gallery.entity.ImageBean;
+import com.hynson.gallery.entity.SearchTipItem;
 import com.hynson.gallery.view.AutoSearchAdapter;
 import com.hynson.gallery.view.AutoTextView;
 import com.hynson.gallery.view.ImageAdapter;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     AutoTextView autoTV;
     Button dialogBtn, searchBtn;
     AutoSearchAdapter searchAdapter;
-    List<String> historyList;
+    List<SearchTipItem> historyList = new ArrayList<SearchTipItem>();
 
     // 图片加载
     ProgressBar loadPB;
@@ -129,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
         mContext = getApplicationContext();
 
         autoTV = findViewById(R.id.input_auto_tv);
-        dialogBtn = findViewById(R.id.dialog_btn);
-        searchBtn = findViewById(R.id.search_btn);
+        dialogBtn = findViewById(R.id.filter_btn);
+        //        searchBtn = findViewById(R.id.search_btn);
         imageRV = findViewById(R.id.image_list_rv);
         loadPB = findViewById(R.id.load_pb);
         loadPB.setVisibility(View.GONE);
@@ -175,7 +176,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         imageRV.setAdapter(imageAdapter);
-        historyList = SearchSharedPreferences.getSearchHistoty(mContext);
+        List<String> list = SearchSharedPreferences.getSearchHistoty(mContext);
+        historyList.clear();
+        for (int i = 0; i < list.size(); i++) {
+            historyList.add(new SearchTipItem(list.get(i)));
+        }
         searchAdapter = new AutoSearchAdapter(historyList, MainActivity.this);
         autoTV.setThreshold(1); // 设置至少输入1个字符开始匹配提示
         autoTV.setAdapter(searchAdapter);
@@ -204,16 +209,26 @@ public class MainActivity extends AppCompatActivity {
 
         searchAdapter.setOnItemClickListener(new AutoSearchAdapter.OnItemClickListener() {
             @Override
-            public void onClick(String str) {
-                autoTV.setText(str); //将点击到的item赋值给输入框
-                autoTV.setSelection(str.length());//将光标移至文字末尾
+            public void onClick(SearchTipItem item) {
+                autoTV.setText(item.name); //将点击到的item赋值给输入框
+                autoTV.setSelection(item.name.length());//将光标移至文字末尾
                 autoTV.dismissDropDown();
+
+                mParams[4] = item.name;
+                if (mParams[4].length() < 1) {
+                    Toast.makeText(mContext, "输入为空！", Toast.LENGTH_SHORT).show();
+                } else {
+                    SearchSharedPreferences.addSearchHistoty(mContext, mParams[4]);
+                    imageLoadTask = new ImageLoadTask();
+                    imageLoadTask.setLoadCallBack(loadCallBack);
+                    imageLoadTask.execute(mParams[0], mParams[1], mParams[2], mParams[3], mParams[4]);
+                }
             }
 
             @Override
-            public void onLongClick(String str) {
-                autoTV.setText(str);
-                autoTV.setSelection(str.length());
+            public void onLongClick(SearchTipItem item) {
+                autoTV.setText(item.name);
+                autoTV.setSelection(item.name.length());
                 autoTV.dismissDropDown();
             }
         });
@@ -230,21 +245,6 @@ public class MainActivity extends AppCompatActivity {
                         System.arraycopy(params, 0, mParams, 0, params.length);
                     }
                 });
-            }
-        });
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mParams[4] = autoTV.getText().toString();
-                if (mParams[4].length() < 1) {
-                    Toast.makeText(mContext, "输入为空！", Toast.LENGTH_SHORT).show();
-                } else {
-                    SearchSharedPreferences.addSearchHistoty(mContext, mParams[4]);
-                    searchAdapter.setData(SearchSharedPreferences.getSearchHistoty(mContext));
-                    imageLoadTask = new ImageLoadTask();
-                    imageLoadTask.setLoadCallBack(loadCallBack);
-                    imageLoadTask.execute(mParams[0], mParams[1], mParams[2], mParams[3], mParams[4]);
-                }
             }
         });
     }

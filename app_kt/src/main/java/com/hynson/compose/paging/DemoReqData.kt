@@ -43,7 +43,7 @@ data class DatasBean(
     var publishTime: Long = 0,
     var realSuperChapterId: Int = 0,
     var selfVisible: Int = 0,
-    var shareDate: Long = 0,
+    var shareDate: Long? = null,
     var shareUser: String? = null,
     var superChapterId: Int = 0,
     var superChapterName: String? = null,

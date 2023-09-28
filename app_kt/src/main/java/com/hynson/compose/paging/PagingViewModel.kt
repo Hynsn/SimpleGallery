@@ -8,6 +8,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 class PagingViewModel : ViewModel() {
@@ -15,7 +17,7 @@ class PagingViewModel : ViewModel() {
     private val pager by lazy {
         Pager(PagingConfig(pageSize = 8)) {
             ADataSource()
-        }.flow.cachedIn(viewModelScope)// 缓存数据
+        }.flow.cachedIn(CoroutineScope(Dispatchers.Default)) // 缓存数据
     }
     val viewState by mutableStateOf(ViewState(pager))
 }
