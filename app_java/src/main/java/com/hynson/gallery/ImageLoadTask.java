@@ -12,13 +12,16 @@ import com.hynson.gallery.entity.ImageBean;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-public class ImageLoadTask extends AsyncTask<String, Void, Integer> {
+public class ImageLoadTask extends AsyncTask<Map<String, String>, Void, Integer> {
     final static String TAG = "ImageLoadTask";
 
     private static OkHttpClient httpClient;
@@ -36,18 +39,23 @@ public class ImageLoadTask extends AsyncTask<String, Void, Integer> {
     }
 
     @Override
-    protected Integer doInBackground(String... strings) {
-        Log.i(TAG, "doInBackground: " + strings[0]);
+    protected Integer doInBackground(Map... maps) {
         Request.Builder builder = new Request.Builder();
         builder.addHeader("Accept", "text/html,application/json");
         builder.addHeader("Accept-Encoding", "utf-8");
-        Request verReq = builder.url("https://pixabay.com/api/?pretty=false&key=" + strings[0] + "&per_page=" + strings[1] + "&category=" + strings[2] + "&image_type=" + strings[3] + "&q=" + strings[4]).get().build();
-
-        Log.i(TAG, "search: " + verReq);
-        Call call = httpClient.newCall(verReq);
+        HttpUrl.Builder httpUrl = HttpUrl.parse("https://pixabay.com/api/?pretty=false").newBuilder();
+        Set<Map.Entry<String, String>> entrySet = maps[0].entrySet();
+        for (Map.Entry<String, String> entry : entrySet) {
+            httpUrl.addQueryParameter(entry.getKey(), entry.getValue());
+        }
+        Request req = builder.url(httpUrl.build()).get().build();
+        Log.i(TAG, "search: " + req);
+        Call call = httpClient.newCall(req);
         List<ImageBean> images = new ArrayList<>();
         try {
-            JSONObject root = JSON.parseObject(call.execute().body().string());
+            String body = call.execute().body().string();
+            Log.i(TAG, "body: " + body);
+            JSONObject root = JSON.parseObject(body);
             JSONArray array = root.getJSONArray("hits");
             for (int i = 0; i < array.size(); i++) {
                 String id = array.getJSONObject(i).get("id").toString();

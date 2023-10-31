@@ -25,8 +25,8 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
     View mView;
     EditTextWithClear pwdET;
     Button cancelBtn;
-    NumberPicker perpageNP,categoryNP,typeNP;
-    String[] imageCategory = {"all","fashion", "nature", "backgrounds", "science", "education", "people", "feelings", "religion", "health", "places", "animals", "industry", "food", "computer", "sports", "transportation", "travel", "buildings", "business", "music"};
+    NumberPicker perpageNP, categoryNP, typeNP;
+    String[] imageCategory = {"all", "fashion", "nature", "backgrounds", "science", "education", "people", "feelings", "religion", "health", "places", "animals", "industry", "food", "computer", "sports", "transportation", "travel", "buildings", "business", "music"};
     String[] imageTypes = {"all", "photo", "illustration", "vector"};
 
     @Override
@@ -34,7 +34,7 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
         super.onStart();
         // 窗口中不同参数测试
         // 1、MATCH_PARENT
-        getDialog().getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,-2);
+        getDialog().getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, -2);
         /*// 2、WRAP_CONTENT
         getDialog().getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT,-2);*/
         /*// 3、根据屏幕大小缩放
@@ -53,7 +53,7 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
 
         int resId = getArguments().getInt("dialog_resid");
         String key = getArguments().getString("dialog_key");
-        mView = inflater.inflate(resId,container,false);
+        mView = inflater.inflate(resId, container, false);
         pwdET = mView.findViewById(R.id.pwd_et);
         pwdET.setClearIcon(R.drawable.auto_clear_icon30);
         pwdET.setText(key);
@@ -85,9 +85,9 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.cancel_btn:
-                updateCallBack.update(pwdET.getText().toString().trim(),perpageNP.getValue()+"",imageCategory[categoryNP.getValue()],imageTypes[typeNP.getValue()]);
+                updateCallBack.update(pwdET.getText().toString().trim(), perpageNP.getValue(), imageCategory[categoryNP.getValue()], imageTypes[typeNP.getValue()]);
                 dismiss();
                 break;
             default:
@@ -97,24 +97,24 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
 
     @Override
     public void show(@NonNull FragmentManager manager, @Nullable String tag) {
-        super.show(manager,tag);
+        super.show(manager, tag);
         manager.executePendingTransactions();
     }
 
-    public void showDialog(int resid,String key,FragmentManager manager){
+    public void showDialog(int resid, String key, FragmentManager manager) {
         Bundle args = new Bundle();
         args.putInt("dialog_resid", resid);
-        args.putString("dialog_key",key);
+        args.putString("dialog_key", key);
         setArguments(args);
         if (!isAdded()) {
             show(manager, TAG);
-        }
-        else {
+        } else {
             dismiss();
             show(manager, TAG);
         }
         args.clear();
     }
+
     private UpdateCallBack updateCallBack;
 
     public void setUpdateCallBack(UpdateCallBack updateCallBack) {
@@ -122,6 +122,6 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
     }
 
     public interface UpdateCallBack {
-        void update(String... params);
+        void update(String apiKey, int perPage, String category, String imageType);
     }
 }

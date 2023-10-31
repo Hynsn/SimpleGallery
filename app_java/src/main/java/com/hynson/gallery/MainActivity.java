@@ -16,17 +16,22 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.hynson.gallery.entity.ImageBean;
+import com.hynson.gallery.entity.SearchImageReq;
 import com.hynson.gallery.entity.SearchTipItem;
 import com.hynson.gallery.view.AutoSearchAdapter;
 import com.hynson.gallery.view.AutoTextView;
 import com.hynson.gallery.view.ImageAdapter;
+import com.hynson.gallery.view.LoadMoreListener;
 import com.hynson.gallery.view.SettingDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,14 +53,8 @@ public class MainActivity extends AppCompatActivity {
     List<ImageBean> imageList;
 
     // http请求参数
-    String[] mParams = {
-            "14413115-ccc6a3f9a9c37f4f850f30517", // apikey
-            "200",                                // per page
-            "all",                                   // category
-            "all",                                 // image type
-            ""                                   // search key
-    };
-
+    private SearchImageReq searchImageReq = new SearchImageReq(20, "all", "all", "");
+    private String API_KEY = "14413115-ccc6a3f9a9c37f4f850f30517";
     String[] testArry = {
             "hello", "world"
     };
@@ -79,31 +78,50 @@ public class MainActivity extends AppCompatActivity {
 
     LoadCallBack loadCallBack = new LoadCallBack() {
         @Override
+        public boolean isLoadMore() {
+            return searchImageReq.page != 0;
+        }
+
+        @Override
         public void pre() {
-            imageAdapter.clearData();
-            loadPB.setVisibility(View.VISIBLE);
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(autoTV.getWindowToken(), 0);
+            if (!isLoadMore()) {
+                imageAdapter.clearData();
+                loadPB.setVisibility(View.VISIBLE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(autoTV.getWindowToken(), 0);
+                }
             }
         }
 
         @Override
         public void result(List<ImageBean> list, int total) {
-            imageList.clear();
-            imageList.addAll(list);
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (imageList.size() <= 0) {
-                        Toast.makeText(getBaseContext(), "搜索为空", Toast.LENGTH_SHORT).show();
-                        return;
+            if (total == 0) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext(), "无数据", Toast.LENGTH_SHORT).show();
                     }
-                    imageAdapter.updateData(imageList, imageList.size());
-                    Log.i(TAG, "imageAdapter: " + imageAdapter.getItemCount());
+                });
+            } else {
+                if (!isLoadMore()) {
+                    imageList.clear();
+                    imageList.addAll(list);
+                } else {
+                    imageList.addAll(list);
                 }
-            });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (list.size() <= 0) {
+                            Toast.makeText(getBaseContext(), "搜索为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        imageAdapter.updateData(list, list.size());
+                        Log.i(TAG, "imageAdapter: " + imageAdapter.getItemCount());
+                    }
+                });
+            }
         }
 
         @Override
@@ -118,7 +136,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void post() {
-            loadPB.setVisibility(View.GONE);
+            if (!isLoadMore()) {
+                loadPB.setVisibility(View.GONE);
+            }
         }
     };
 
@@ -136,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
         loadPB = findViewById(R.id.load_pb);
         loadPB.setVisibility(View.GONE);
         autoTV.setClearIcon(R.drawable.auto_clear_icon30);
-
         for (int i = 0; i < testArry.length; i++) {
             SearchSharedPreferences.addSearchHistoty(mContext, testArry[i]);
         }
@@ -152,27 +171,21 @@ public class MainActivity extends AppCompatActivity {
             staggeredManager = new StaggeredGridLayoutManager((config.orientation == Configuration.ORIENTATION_LANDSCAPE) ? 3 : 2, StaggeredGridLayoutManager.VERTICAL);
         }
         imageRV.setLayoutManager(staggeredManager);
-
-        imageRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        staggeredManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);//防止item 交换位置
+        ((SimpleItemAnimator) Objects.requireNonNull(imageRV.getItemAnimator())).setSupportsChangeAnimations(false);
+        imageRV.getItemAnimator().setChangeDuration(0);
+        imageRV.addOnScrollListener(new LoadMoreListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                //super.onScrolled(recyclerView, dx, dy);
-                if (imageAdapter.getItemCount() >= imageList.size()) {
-                    return;
-                }
-                if (recyclerView.canScrollVertically(1)) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            mHandler.post(scrollRunable);
-                        }
-                    }.start();
-                }
-            }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+            public void onLoadMore(int lastPosition) {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        searchImageReq.page++;
+                        ImageLoadTask imageLoadTask = new ImageLoadTask();
+                        imageLoadTask.setLoadCallBack(loadCallBack);
+                        imageLoadTask.execute(searchImageReq.getMap(API_KEY));
+                    }
+                }.start();
             }
         });
         imageRV.setAdapter(imageAdapter);
@@ -213,15 +226,16 @@ public class MainActivity extends AppCompatActivity {
                 autoTV.setText(item.name); //将点击到的item赋值给输入框
                 autoTV.setSelection(item.name.length());//将光标移至文字末尾
                 autoTV.dismissDropDown();
-
-                mParams[4] = item.name;
-                if (mParams[4].length() < 1) {
+                String key = item.name;
+                searchImageReq.key = item.name;
+                if (key.length() < 1) {
                     Toast.makeText(mContext, "输入为空！", Toast.LENGTH_SHORT).show();
                 } else {
-                    SearchSharedPreferences.addSearchHistoty(mContext, mParams[4]);
+                    SearchSharedPreferences.addSearchHistoty(mContext, key);
                     imageLoadTask = new ImageLoadTask();
                     imageLoadTask.setLoadCallBack(loadCallBack);
-                    imageLoadTask.execute(mParams[0], mParams[1], mParams[2], mParams[3], mParams[4]);
+
+                    imageLoadTask.execute(searchImageReq.getMap(API_KEY));
                 }
             }
 
@@ -237,12 +251,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SettingDialog settingDialog = new SettingDialog();
-                settingDialog.showDialog(R.layout.setting_dialog, mParams[0], getSupportFragmentManager());
+                settingDialog.showDialog(R.layout.setting_dialog, API_KEY, getSupportFragmentManager());
                 settingDialog.setUpdateCallBack(new SettingDialog.UpdateCallBack() {
-
                     @Override
-                    public void update(String... params) {
-                        System.arraycopy(params, 0, mParams, 0, params.length);
+                    public void update(String apiKey, int perPage, String category, String imageType) {
+                        API_KEY = apiKey;
+                        searchImageReq.perPage = perPage;
+                        searchImageReq.category = category;
+                        searchImageReq.imageType = imageType;
                     }
                 });
             }
