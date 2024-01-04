@@ -226,90 +226,90 @@ fun alertDialogTest(onDismissRequest: () -> Unit, leftClick: () -> Unit, rightCl
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Preview
-@Composable
-fun BottomSheetScaffold() {
-    val scope = rememberCoroutineScope()
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    BottomSheetScaffold(
-        sheetContent = {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(128.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Swipe up to expand sheet")
-            }
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(64.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Sheet content")
-                Spacer(Modifier.height(20.dp))
-                Button(
-                    onClick = {
-                        scope.launch { scaffoldState.bottomSheetState.collapse() }
-                    }
-                ) {
-                    Text("Click to collapse sheet")
-                }
-            }
-        },
-        scaffoldState = scaffoldState,
-        topBar = {
-            TopAppBar(
-                title = { Text("Bottom sheet scaffold") },
-                navigationIcon = {
-                    IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Localized description")
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            var clickCount by remember { mutableStateOf(0) }
-            FloatingActionButton(
-                onClick = {
-                    // show snackbar as a suspend function
-                    scope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar("Snackbar #${++clickCount}")
-                    }
-                }
-            ) {
-                Icon(Icons.Default.Favorite, contentDescription = "Localized description")
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End,
-        sheetPeekHeight = 128.dp,
-        drawerContent = {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Drawer content")
-                Spacer(Modifier.height(20.dp))
-                Button(onClick = { scope.launch { scaffoldState.drawerState.close() } }) {
-                    Text("Click to close drawer")
-                }
-            }
-        }
-    ) { innerPadding ->
-        LazyColumn(contentPadding = innerPadding) {
-            items(100) {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .background(Color.Red)
-                )
-            }
-        }
-    }
-}
-
+//@OptIn(ExperimentalMaterialApi::class)
+//@Preview
+//@Composable
+//fun BottomSheetScaffold() {
+//    val scope = rememberCoroutineScope()
+//    val scaffoldState = rememberBottomSheetScaffoldState()
+//    BottomSheetScaffold(
+//        sheetContent = {
+//            Box(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .height(128.dp),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text("Swipe up to expand sheet")
+//            }
+//            Column(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .padding(64.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text("Sheet content")
+//                Spacer(Modifier.height(20.dp))
+//                Button(
+//                    onClick = {
+//                        scope.launch { scaffoldState.bottomSheetState.collapse() }
+//                    }
+//                ) {
+//                    Text("Click to collapse sheet")
+//                }
+//            }
+//        },
+//        scaffoldState = scaffoldState,
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("Bottom sheet scaffold") },
+//                navigationIcon = {
+//                    IconButton(onClick = { scope.launch { scaffoldState.drawerState.open() } }) {
+//                        Icon(Icons.Default.Menu, contentDescription = "Localized description")
+//                    }
+//                }
+//            )
+//        },
+//        floatingActionButton = {
+//            var clickCount by remember { mutableStateOf(0) }
+//            FloatingActionButton(
+//                onClick = {
+//                    // show snackbar as a suspend function
+//                    scope.launch {
+//                        scaffoldState.snackbarHostState.showSnackbar("Snackbar #${++clickCount}")
+//                    }
+//                }
+//            ) {
+//                Icon(Icons.Default.Favorite, contentDescription = "Localized description")
+//            }
+//        },
+//        floatingActionButtonPosition = FabPosition.End,
+//        sheetPeekHeight = 128.dp,
+//        drawerContent = {
+//            Column(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text("Drawer content")
+//                Spacer(Modifier.height(20.dp))
+//                Button(onClick = { scope.launch { scaffoldState.drawerState.close() } }) {
+//                    Text("Click to close drawer")
+//                }
+//            }
+//        }
+//    ) { innerPadding ->
+//        LazyColumn(contentPadding = innerPadding) {
+//            items(100) {
+//                Box(
+//                    Modifier
+//                        .fillMaxWidth()
+//                        .height(50.dp)
+//                        .background(Color.Red)
+//                )
+//            }
+//        }
+//    }
+//}
+//

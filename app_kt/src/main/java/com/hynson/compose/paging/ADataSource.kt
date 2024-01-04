@@ -34,6 +34,7 @@ class ADataSource : PagingSource<Int, DatasBean>() {
             )
 
         } catch (e: Exception) {
+            e.printStackTrace()
             if (e is IOException) {
                 Log.d("测试错误数据", "-------连接失败")
             }

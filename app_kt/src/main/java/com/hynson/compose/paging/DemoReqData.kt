@@ -1,6 +1,7 @@
 package com.hynson.compose.paging
 
 import android.os.Parcelable
+import androidx.compose.runtime.MutableState
 import kotlinx.parcelize.Parcelize
 
 data class DemoReqData(
@@ -16,6 +17,7 @@ data class DataBean(
     var pageCount: Int = 0,
     var size: Int = 0,
     var total: Int = 0,
+    var whetherRecipeLike: MutableState<Boolean>,
     var datas: List<DatasBean>? = null
 )
 

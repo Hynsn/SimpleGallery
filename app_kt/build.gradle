@@ -54,6 +54,7 @@ dependencies {
     implementation deps.retrofit2_gson
     implementation deps.lifecycle_runtime_ktx
     implementation project(path: ':network')
+    implementation 'androidx.compose.material3:material3-android:1.2.0-beta01'
     testImplementation deps.junit
     androidTestImplementation deps.test_ext
     androidTestImplementation deps.espresso_core

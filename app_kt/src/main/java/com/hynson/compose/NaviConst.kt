@@ -16,5 +16,6 @@ object NaviConst {
     const val PAGING = "Paging"
     const val DETAIL = "Detail"
     const val MODAL_BOTTOMSHEET = "ModalBottomSheet"
+    const val WHEEL_PICKER = "WheelPicker"
     const val STATUBAR = "StatusBar"
 }

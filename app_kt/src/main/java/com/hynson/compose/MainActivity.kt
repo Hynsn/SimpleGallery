@@ -69,8 +69,11 @@ class MainActivity : ComponentActivity() {
                     ScaffoldPage()
                 }
                 composable(NaviConst.MODAL_BOTTOMSHEET) {
-//                    ModalBottomDemo()
+                    //                    ModalBottomDemo()
                     CustomModalBottomSheetDemo()
+                }
+                composable(NaviConst.WHEEL_PICKER) {
+                    WheelPickerScreen()
                 }
                 composable(
                     route = "${NaviConst.DETAIL}/{${ParamsConst.TITLE}}/{${ParamsConst.ID}}",

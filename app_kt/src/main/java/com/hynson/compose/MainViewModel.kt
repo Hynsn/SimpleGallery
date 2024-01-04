@@ -28,7 +28,10 @@ class MainViewModel() : ViewModel() {
             ContentItem("沉浸式状态栏") {
                 val intent = Intent(context, StatusBarActivity::class.java)
                 ContextCompat.startActivity(context, intent, null)
-            }
+            },
+            ContentItem("滚轮控件") {
+                navController.navigate(NaviConst.WHEEL_PICKER)
+            },
         )
     }
 }
