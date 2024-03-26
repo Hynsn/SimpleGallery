@@ -39,6 +39,13 @@ import com.hynson.compose.MainActivity
  */
 private val countPreferenceKey = intPreferencesKey("widget-key")
 private val countParamKey = ActionParameters.Key<Int>("widget-key")
+/*
+* 参考：
+* https://juejin.cn/post/7277218424690131005
+* https://zhuanlan.zhihu.com/p/530370126
+* https://juejin.cn/post/7277799192966692864
+* https://blog.csdn.net/u012673089/article/details/136179554
+* */
 
 class CounterWidget : GlanceAppWidget() {
 
